@@ -1,10 +1,10 @@
 # card-alexa-alarms-timers
 Card for Alexa Timers and Alarms
 
-Code copied from @Kethlak from Home Assistant Forum. Thanks to her for making an alarm version. Details can be found in this thread: https://community.home-assistant.io/t/show-all-active-alexa-timers
+Code copied from @Kethlak from Home Assistant Forum. Thanks to her for making an alarm version when all she used are timers. Details can be found in this thread: https://community.home-assistant.io/t/show-all-active-alexa-timers
 
 This version:
-1. Adds HACS repository as a Lovelace repository
+1. Adds HACS repository to make it easier to install
 1. Combines both Alarms and Timers in a single card
 1. Has some locale changes and bolds the time remaining (because I like it that way)
 
