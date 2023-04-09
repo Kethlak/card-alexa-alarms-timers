@@ -15,7 +15,6 @@ Add this repo to your hacs repository as a lovelace
 Card setup:
 ```
 type: custom:card-alexa-alarms-timers
-title: Test
 entities_alarm:
   - sensor.livingroom_next_alarm
   - sensor.kitchen_next_alarm
