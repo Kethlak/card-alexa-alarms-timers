@@ -24,4 +24,4 @@ entities_timer:
   - sensor.kitchen_next_timer
 ```
 
-Add as many _next_timer and _next_alarms in th respective catagories
+Add as many _next_timer and _next_alarms as you want in the respective catagories
