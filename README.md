@@ -10,7 +10,7 @@ This version:
 
 # Setup
 
-Add this repo to your hacs repository as a lovelace
+Add this repo to your hacs repository as a lovelace. Install the card.
 
 Card setup:
 ```
