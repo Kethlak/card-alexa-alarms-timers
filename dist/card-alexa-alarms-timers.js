@@ -32,52 +32,62 @@ class CardAlexaAlarmsTimers extends HTMLElement {
     }
     draw() {
         // Alarms
-        const entities = this.config.entities_alarm;
+        if(!this.config.hasOwnProperty('entities_alarm') && !this.config.hasOwnProperty('entities_timer')) {
+            return;
+        }
 
+        
         this.alarms = [];
-        for (let i = 0; i < entities.length; i++) {
-            if (this.hass.states[entities[i]] !== undefined) {
-                const attributes = this.hass.states[entities[i]].attributes;
-                const entity_id = this.hass.states[entities[i]].attributes.friendly_name;
-                if (attributes.hasOwnProperty('sorted_active')) {
-                    const sorted_active = JSON.parse(attributes.sorted_active);
-                    for (let j = 0; j < sorted_active.length; j++) {
-                        const alarm = sorted_active[j][1];
-                        if (Date.parse(alarm.date_time) >= Date.now()) {
-                            let showSeconds = true;
-                            console.log('does show_alarm_name_seconds exist? ' + this.config.hasOwnProperty('show_alarm_name_seconds'));
-                            console.log('what is show_alarm_name_seconds?');
-                            console.log(this.config.show_alarm_name_seconds);
-                            if(this.config.hasOwnProperty('show_alarm_name_seconds') && this.config.show_alarm_name_seconds == false) {
-                                showSeconds = false;
+        if(this.config.hasOwnProperty('entities_alarm')) {
+            const entities = this.config.entities_alarm;
+    
+            for (let i = 0; i < entities.length; i++) {
+                if (this.hass.states[entities[i]] !== undefined) {
+                    const attributes = this.hass.states[entities[i]].attributes;
+                    const entity_id = this.hass.states[entities[i]].attributes.friendly_name;
+                    if (attributes.hasOwnProperty('sorted_active')) {
+                        const sorted_active = JSON.parse(attributes.sorted_active);
+                        for (let j = 0; j < sorted_active.length; j++) {
+                            const alarm = sorted_active[j][1];
+                            if (Date.parse(alarm.date_time) >= Date.now()) {
+                                let showSeconds = true;
+                                console.log('does show_alarm_name_seconds exist? ' + this.config.hasOwnProperty('show_alarm_name_seconds'));
+                                console.log('what is show_alarm_name_seconds?');
+                                console.log(this.config.show_alarm_name_seconds);
+                                if(this.config.hasOwnProperty('show_alarm_name_seconds') && this.config.show_alarm_name_seconds == false) {
+                                    showSeconds = false;
+                                }
+                                this.alarms.push(new AlexaAlarm(alarm.alarmLabel, entity_id, alarm.date_time, showSeconds));
                             }
-                            this.alarms.push(new AlexaAlarm(alarm.alarmLabel, entity_id, alarm.date_time, showSeconds));
                         }
                     }
                 }
             }
+            this.alarms.sort((a, b) => a.alarmTime - b.alarmTime);
         }
-        this.alarms.sort((a, b) => a.alarmTime - b.alarmTime);
-
         // Timers
-        const entities_t = this.config.entities_timer;
         this.timers = [];
-        for (let i = 0; i < entities_t.length; i++) {
-            if (this.hass.states[entities_t[i]] !== undefined) {
-                const attributes = this.hass.states[entities_t[i]].attributes;
-                const entity_id = this.hass.states[entities_t[i]].attributes.friendly_name;
-                if (attributes.hasOwnProperty('sorted_active')) {
-                    const sorted_active = JSON.parse(attributes.sorted_active);
-                    for (let j = 0; j < sorted_active.length; j++) {
-                        const timer = sorted_active[j][1];
-                        if (timer.triggerTime >= new Date().getTime()) {
-                            this.timers.push(new AlexaTimer(timer.timerLabel, entity_id, timer.triggerTime, timer.originalDurationInMillis));
+
+        if(this.config.hasOwnProperty('entities_timer')) {
+            
+            const entities_t = this.config.entities_timer;
+            for (let i = 0; i < entities_t.length; i++) {
+                if (this.hass.states[entities_t[i]] !== undefined) {
+                    const attributes = this.hass.states[entities_t[i]].attributes;
+                    const entity_id = this.hass.states[entities_t[i]].attributes.friendly_name;
+                    if (attributes.hasOwnProperty('sorted_active')) {
+                        const sorted_active = JSON.parse(attributes.sorted_active);
+                        for (let j = 0; j < sorted_active.length; j++) {
+                            const timer = sorted_active[j][1];
+                            if (timer.triggerTime >= new Date().getTime()) {
+                                this.timers.push(new AlexaTimer(timer.timerLabel, entity_id, timer.triggerTime, timer.originalDurationInMillis));
+                            }
                         }
                     }
                 }
             }
+            this.timers.sort((a, b) => a.remainingTime - b.remainingTime);
         }
-        this.timers.sort((a, b) => a.remainingTime - b.remainingTime);
 
         this.innerHTML = '';
         this.content = null;
