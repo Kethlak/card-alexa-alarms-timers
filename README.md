@@ -43,7 +43,7 @@ Add as many _next_timer and _next_alarms as you want in the entities_alarm and e
 
 # Optional Parameters
 - `remaining_time_bold` defaults to true, and toggles whether the remaining time column is displayed in bold.
-- `show_cancel_button` and `cancel_entity` are included for the use case of wanting to be able to cancel timers and alarms with an "X" icon. `show_cancel_button` is false by default. `cancel_entity` refers to the device which the cancel command is sent to. For more details, see "Cancelling Timers/Alarms" below.
+- `show_cancel_button` and `cancel_entity` are included for the use case of wanting to be able to cancel timers and alarms with an "X" icon. `show_cancel_button` is false by default. `cancel_entity` refers to the device which the cancel command is sent to. For more details, see "Canceling Timers/Alarms" below.
 - `hide_card_on_empty` defaults to false, and is included for my original use case of not wanting to display an empty timer box on my wall display.
 - `card_title` defaults to "Alexa Timers and Alarms". If set to an empty string, no title will be displayed.
 - `show_device_name` defaults to true, and toggles whether to display the name of the device the timer or alarm is set on. For example, if you have a timer named "Cake" set on a device named "Kitchen Echo", if this is true it will display the name as "Cake on Kitchen Echo", and if false it will just display the name as "Cake".
@@ -63,3 +63,6 @@ card_mod:
       --card-mod-icon-color: var(--accent-color);
     }
 ```
+
+# Canceling Timers/Alarms
+I had a bit of difficulty getting Alexa to cancel timers with no name that have the same duration. Currently what happens is if you try to cancel an unnamed timer that has the same duration as another one, it first tells the cancel entity to cancel the timer based on its length, as in “cancel 1 hour timer” and then waits 2 seconds and tells it “the nth one” based on remaining duration. So if you have 3 1 hour timers and click on the ‘X’ after the second one in the list, it first sends the command “cancel 1 hour timer” and waits 2 seconds and sends the command “the 2nd one”. I find that this works, although you still hear the device starting to say “You have two one hour timers…” but it gets cut off partway through and says it cancelled the timer. If I try to send it faster the device can’t handle it, and I haven’t been able to figure out how to phrase it as a single command without the initial context for the device. So it works, but it sounds funny.
