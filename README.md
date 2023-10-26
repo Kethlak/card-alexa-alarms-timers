@@ -1,6 +1,7 @@
 # card-alexa-alarms-timers
 Card for Alexa Timers and Alarms
 
+Originally created by @Kethlak.
 Thanks to @jdeath who converted this to a HACS repository and added some changes. History of the project can be found in this thread: https://community.home-assistant.io/t/show-all-active-alexa-timers
 
 # Installation
