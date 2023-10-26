@@ -6,7 +6,7 @@ Thanks to @jdeath who converted this to a HACS repository and added some changes
 
 # Installation
 These instructions were written with Home Assistant 2023.10.5 and HassOS 11.0, and assume you have HACS and the Alexa Media Player integration installed.
-Go to HACS > Frontend. Click the three dots in the upper right corner of the screen. Select "Custom Repositories". Under "Repository" enter `jdeath/card-alexa-alarms-timers`. For the Category, select "Lovelace".
+Go to HACS > Frontend. Click the three dots in the upper right corner of the screen. Select "Custom Repositories". Under "Repository" enter `Kethlak/card-alexa-alarms-timers`. For the Category, select "Lovelace".
 You may see "Alexa Timer and Alarm Card" show up as a new repository. If so, click this. If not, click the button in the lower left of the screen labeled "Explore & Download Repositories" and search for "Alexa Timer and Alarm Card", and click on the result.
 Click the "Download" button in the lower left of the screen.
 
