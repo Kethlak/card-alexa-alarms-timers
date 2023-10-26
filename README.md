@@ -29,6 +29,7 @@ Within the .yaml file for your dashboard, the card looks like this:
     - sensor.livingroom_next_timer
     - sensor.kitchen_next_timer
   # the following are optional parameters:
+  remaining_time_bold: true
   show_cancel_button: false
   cancel_entity: media_player.livingroom
   hide_card_on_empty: false
@@ -41,6 +42,7 @@ Within the .yaml file for your dashboard, the card looks like this:
 Add as many _next_timer and _next_alarms as you want in the entities_alarm and entities_timer categories.
 
 # Optional Parameters
+- `remaining_time_bold` defaults to true, and toggles whether the remaining time column is displayed in bold.
 - `show_cancel_button` and `cancel_entity` are included for the use case of wanting to be able to cancel timers and alarms with an "X" icon. `show_cancel_button` is false by default. `cancel_entity` refers to the device which the cancel command is sent to. For more details, see "Cancelling Timers/Alarms" below.
 - `hide_card_on_empty` defaults to false, and is included for my original use case of not wanting to display an empty timer box on my wall display.
 - `card_title` defaults to "Alexa Timers and Alarms". If set to an empty string, no title will be displayed.
