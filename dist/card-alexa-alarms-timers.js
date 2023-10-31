@@ -120,7 +120,7 @@ class CardAlexaAlarmsTimers extends HTMLElement {
                 }
                 timeLeft += this.alarms[i].hours + ":" + addLeadingZero(this.alarms[i].minutes) + ":" + addLeadingZero(this.alarms[i].seconds);
                 if(this.config.hasOwnProperty('show_empty_hours') && this.config.show_empty_hours == false) {
-                    if(this.timers[i].hours == 0 && this.alarms[i].days == 0) {
+                    if(this.alarms[i].hours == 0 && this.alarms[i].days == 0) {
                         timeLeft = addLeadingZero(this.alarms[i].minutes) + ":" + addLeadingZero(this.alarms[i].seconds);
                     }
                 }
