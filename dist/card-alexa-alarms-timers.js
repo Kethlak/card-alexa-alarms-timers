@@ -93,6 +93,7 @@ class CardAlexaAlarmsTimers extends HTMLElement {
         this.content = null;
 
         if (this.alarms.length > 0 || this.timers.length > 0 || (!this.config.hasOwnProperty('hide_card_on_empty') || this.config.hide_card_on_empty == false)) {
+            console.log(this.config);
             const haCard = document.createElement('ha-card');
             haCard.classList.add('alexa-alarms-timers');
             const cardContent = document.createElement('div');
