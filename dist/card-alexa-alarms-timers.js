@@ -126,6 +126,7 @@ class CardAlexaAlarmsTimers extends HTMLElement {
                 }
                 const tr = document.createElement('tr');
                 let nameTd = document.createElement('td');
+                nameTd.classList.add('alexa-alarms-timers-name');
                 let nameTdText = document.createTextNode(name);
                 if(!this.config.hasOwnProperty('show_device_name') || this.config.show_device_name == true) {
                     nameTdText = document.createTextNode(name + " Alarm on " + this.alarms[i].device);
@@ -133,6 +134,7 @@ class CardAlexaAlarmsTimers extends HTMLElement {
                 nameTd.appendChild(nameTdText);
                 tr.appendChild(nameTd);
                 let timeLeftTd = document.createElement('td');
+                timeLeftTd.classList.add('alexa-alarms-timers-time');
                 let timeLeftTdText = document.createTextNode(timeLeft);
                 if(!this.config.hasOwnProperty('remaining_time_bold') || this.config.remaining_time_bold == true) {
                     let timeLeftTdTextInner = document.createTextNode(timeLeft);
@@ -143,6 +145,7 @@ class CardAlexaAlarmsTimers extends HTMLElement {
                 tr.appendChild(timeLeftTd);
                 if(this.config.hasOwnProperty("show_cancel_button") && this.config.show_cancel_button == true && this.config.hasOwnProperty("cancel_entity")) {
                     let xTd = document.createElement('td');
+                    xTd.classList.add('alexa-alarms-timers-x');
                     let a = document.createElement('a');
                     let aContent = document.createElement('ha-icon');
                     aContent.setAttribute("icon", "mdi:close-circle-outline");
@@ -172,6 +175,7 @@ class CardAlexaAlarmsTimers extends HTMLElement {
                 }
                 const tr = document.createElement('tr');
                 let nameTd = document.createElement('td');
+                nameTd.classList.add('alexa-alarms-timers-name');
                 let nameTdText = document.createTextNode(name);
                 if(!this.config.hasOwnProperty('show_device_name') || this.config.show_device_name == true) {
                     nameTdText = document.createTextNode(name + " on " + this.timers[i].device);
@@ -179,6 +183,7 @@ class CardAlexaAlarmsTimers extends HTMLElement {
                 nameTd.appendChild(nameTdText);
                 tr.appendChild(nameTd);
                 let timeLeftTd = document.createElement('td');
+                timeLeftTd.classList.add('alexa-alarms-timers-time');
                 let timeLeftTdText = document.createTextNode(timeLeft);
                 if(!this.config.hasOwnProperty('remaining_time_bold') || this.config.remaining_time_bold == true) {
                     timeLeftTdText = document.createElement('strong');
@@ -189,6 +194,7 @@ class CardAlexaAlarmsTimers extends HTMLElement {
                 tr.appendChild(timeLeftTd);
                 if(this.config.hasOwnProperty("show_cancel_button") && this.config.show_cancel_button == true && this.config.hasOwnProperty("cancel_entity")) {
                     let xTd = document.createElement('td');
+                    xTd.classList.add('alexa-alarms-timers.x');
                     let a = document.createElement('a');
                     let aContent = document.createElement('ha-icon');
                     aContent.setAttribute("icon", "mdi:close-circle-outline");
