@@ -51,9 +51,6 @@ class CardAlexaAlarmsTimers extends HTMLElement {
                             const alarm = sorted_active[j][1];
                             if (Date.parse(alarm.date_time) >= Date.now()) {
                                 let showSeconds = true;
-                                console.log('does show_alarm_name_seconds exist? ' + this.config.hasOwnProperty('show_alarm_name_seconds'));
-                                console.log('what is show_alarm_name_seconds?');
-                                console.log(this.config.show_alarm_name_seconds);
                                 if(this.config.hasOwnProperty('show_alarm_name_seconds') && this.config.show_alarm_name_seconds == false) {
                                     showSeconds = false;
                                 }
@@ -93,7 +90,6 @@ class CardAlexaAlarmsTimers extends HTMLElement {
         this.content = null;
 
         if (this.alarms.length > 0 || this.timers.length > 0 || (!this.config.hasOwnProperty('hide_card_on_empty') || this.config.hide_card_on_empty == false)) {
-            console.log(this.config);
             const haCard = document.createElement('ha-card');
             haCard.classList.add('alexa-alarms-timers');
             const cardContent = document.createElement('div');
@@ -195,7 +191,7 @@ class CardAlexaAlarmsTimers extends HTMLElement {
                 tr.appendChild(timeLeftTd);
                 if(this.config.hasOwnProperty("show_cancel_button") && this.config.show_cancel_button == true && this.config.hasOwnProperty("cancel_entity")) {
                     let xTd = document.createElement('td');
-                    xTd.classList.add('alexa-alarms-timers.x');
+                    xTd.classList.add('alexa-alarms-timers-x');
                     let a = document.createElement('a');
                     let aContent = document.createElement('ha-icon');
                     aContent.setAttribute("icon", "mdi:close-circle-outline");
@@ -260,7 +256,6 @@ function addLeadingZero(num) {
 }
 
 function getNameFromTime(alarmTime, showSeconds) {
-    console.log('getNameFromTime, alarmTime=' + alarmTime, ', showSeconds=' + showSeconds);
     let alarmDateTime = new Date(alarmTime);
     let today = new Date(Date.now());
     let isAlarmToday = false;
