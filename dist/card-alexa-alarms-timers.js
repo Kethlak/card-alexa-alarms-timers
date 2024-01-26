@@ -37,6 +37,13 @@ class CardAlexaAlarmsTimers extends HTMLElement {
         }
 
         
+        let displayStyle;
+        if(this.config.hasOwnProperty('display_style') && this.config.display_style == "box") {
+            displayStyle = "box";
+        }
+        else {
+            displayStyle = "table";
+        }
         this.alarms = [];
         if(this.config.hasOwnProperty('entities_alarm')) {
             const entities = this.config.entities_alarm;
@@ -92,6 +99,7 @@ class CardAlexaAlarmsTimers extends HTMLElement {
         }
         else {
             this.content = this.querySelector('ha-card');
+            let outerBox;
             let table;
             if(this.content == null) { // if it was empty before, but it shouldn't be anymore, create it.
                 const haCard = document.createElement('ha-card');
@@ -100,9 +108,15 @@ class CardAlexaAlarmsTimers extends HTMLElement {
                 cardContent.classList.add('card-content');
                 haCard.appendChild(cardContent);
                 this.appendChild(haCard);
-                table = document.createElement('table');
-                table.setAttribute('border', '0');
-                table.setAttribute('width', '100%');
+                if(displayStyle == "box") {
+                    outerBox = document.createElement('div');
+                    outerBox.id = "alexa-alarms-timers-outer-box";
+                }
+                else {
+                    table = document.createElement('table');
+                    table.setAttribute('border', '0');
+                    table.setAttribute('width', '100%');
+                }
                 if(!this.config.hasOwnProperty('card_title') || this.config.card_title != "") {
                     let h1Text = 'Alexa Timers and Alarms';
                     if(this.config.hasOwnProperty('card_title')) {
@@ -110,9 +124,19 @@ class CardAlexaAlarmsTimers extends HTMLElement {
                     }
                     haCard.setAttribute("header", h1Text);
                 }
-                cardContent.append(table);
+                if(displayStyle == "box") {
+                    cardContent.append(outerBox);
+                }
+                else {
+                    cardContent.append(table);
+                }
             }
-            table = this.querySelector('table');
+            if(displayStyle == "box") {
+                outerBox = this.querySelector('#alexa-alarms-timers-outer-box');
+            }
+            else {
+                table = this.querySelector('table');
+            }
             this.content = this.querySelector('ha-card > div');
 
             // Alarms
@@ -129,73 +153,131 @@ class CardAlexaAlarmsTimers extends HTMLElement {
                     }
                 }
 
-                let nameTdTextContent = name;
+                let nameTextContent = name;
                 if(!this.config.hasOwnProperty('show_device_name') || this.config.show_device_name == true) {
-                    nameTdTextContent = name + " Alarm on " + this.alarms[i].device;
+                    nameTextContent = name + " Alarm on " + this.alarms[i].device;
                 }
 
-                let timeLeftTdTextContent = timeLeft;
+                let timeLeftTextContent = timeLeft;
                 if(!this.config.hasOwnProperty('remaining_time_bold') || this.config.remaining_time_bold == true) {
-                    timeLeftTdTextContent = "<strong>" + timeLeft + "</strong>";
+                    timeLeftTextContent = "<strong>" + timeLeft + "</strong>";
                 }
 
-                let currentAlarmTr = this.querySelector("#alexa-alarms-timers-id-" + this.alarms[i].id);
-                if(currentAlarmTr == null) {
-                    const tr = document.createElement('tr');
-                    tr.id = "alexa-alarms-timers-id-" + this.alarms[i].id;
-                    let nameTd = document.createElement('td');
-                    nameTd.classList.add('alexa-alarms-timers-name');
-                    let nameTdText = document.createTextNode(name);
-                    nameTd.appendChild(nameTdText);
-                    tr.appendChild(nameTd);
-                    let timeLeftTd = document.createElement('td');
-                    timeLeftTd.classList.add('alexa-alarms-timers-time');
-                    let timeLeftTdText = document.createTextNode(timeLeftTdTextContent);
-                    timeLeftTd.appendChild(timeLeftTdText);
-                    tr.appendChild(timeLeftTd);
-                    if(this.config.hasOwnProperty("show_cancel_button") && this.config.show_cancel_button == true && this.config.hasOwnProperty("cancel_entity")) {
-                        let xTd = document.createElement('td');
-                        xTd.classList.add('alexa-alarms-timers-x');
-                        let a = document.createElement('a');
-                        let aContent = document.createElement('ha-icon');
-                        aContent.setAttribute("icon", "mdi:close-circle-outline");
-                        a.appendChild(aContent);
-                        a.classList.add('timerCancelButton');
-                        a.href = '#';
-                        xTd.appendChild(a);
-                        tr.appendChild(xTd);
-                        let id = this.alarms[i].id;
-                        a.addEventListener('click', (e) => {
-                          cancelTimerAlarm(this, id, "alarm");
-                          e.preventDefault();
-                        });
+                if(displayStyle == "box") {
+                    let currentAlarmBox = this.querySelector("#alexa-alarms-timers-id-" + this.alarms[i].id);
+                    if(currentAlarmBox == null) {
+                        const alarmBox = document.createElement("div");
+                        alarmBox.id = "alexa-alarms-timers-id-" + this.alarms[i].id;
+                        alarmBox.classList.add("alexa-alarms-timers-alarm-box");
+                        let alarmNameBox = document.createElement("div");
+                        alarmNameBox.classList.add('alexa-alarms-timers-name');
+                        let nameText = document.createTextNode(name);
+                        alarmNameBox.appendChild(nameText);
+                        alarmBox.appendChild(alarmNameBox);
+                        let timeLeftBox = document.createElement('div');
+                        timeLeftBox.classList.add('alexa-alarms-timers-time');
+                        let timeLeftText = document.createTextNode(timeLeftTextContent);
+                        timeLeftBox.appendChild(timeLeftText);
+                        alarmBox.appendChild(timeLeftBox);
+                        if(this.config.hasOwnProperty("show_cancel_button") && this.config.show_cancel_button == true && this.config.hasOwnProperty("cancel_entity")) {
+                            let xBox = document.createElement('div');
+                            xBox.classList.add('alexa-alarms-timers-x');
+                            let a = document.createElement('a');
+                            let aContent = document.createElement('ha-icon');
+                            aContent.setAttribute("icon", "mdi:close-circle-outline");
+                            a.appendChild(aContent);
+                            a.classList.add('timerCancelButton');
+                            a.href = '#';
+                            xBox.appendChild(a);
+                            alarmBox.appendChild(xTd);
+                            let id = this.alarms[i].id;
+                            a.addEventListener('click', (e) => {
+                              cancelTimerAlarm(this, id, "alarm");
+                              e.preventDefault();
+                            });
+                        }
+    
+                        // figure out how many rows are currently in the table so we can stick this new row in the right place
+                        const currentAlarmBoxCount = outerBox.querySelectorAll(".alexa-alarms-timers-alarm-box").length;
+                        if(i >= currentAlarmBoxCount) {
+                            outerBox.appendChild(alarmBox);
+                        }
+                        else {
+                            outerBox.insertBefore(alarmBox, outerBox.querySelectorAll(".alexa-alarms-timers-alarm-box")[i]);
+                        }
+                        currentAlarmBox = alarmBox;
                     }
-
-                    // figure out how many rows are currently in the table so we can stick this new row in the right place
-                    const currentTrCount = table.getElementsByTagName("tr").length;
-                    if(i >= currentTrCount) {
-                        table.appendChild(tr);
+                    const currentAlarmNameBox = currentAlarmBox.querySelector('.alexa-alarms-timers-name');
+                    if(currentAlarmNameBox.innerHTML != nameTextContent) { // if the name has changed, update that
+                        currentAlarmNameBox.innerHTML = nameTextContent;
+                        const currentAlarmCancelButton = currentAlarmBox.querySelector('a');
+                        if(currentAlarmCancelButton != null) {
+                            currentAlarmCancelButton.removeEventListener
+                        }
                     }
-                    else {
-                        table.insertBefore(tr, table.getElementsByTagName("tr")[i]);
+    
+                    const currentAlarmTimeLeftBox = currentAlarmBox.querySelector('.alexa-alarms-timers-time');
+                    if(currentAlarmTimeLeftBox.innerHTML != timeLeftTextContent) { // if the time left has changed, update that
+                        currentAlarmTimeLeftBox.innerHTML = timeLeftTextContent;
                     }
-                    currentAlarmTr = tr;
                 }
-                
-                const currentAlarmNameTd = currentAlarmTr.querySelector('.alexa-alarms-timers-name');
-                if(currentAlarmNameTd.innerHTML != nameTdTextContent) { // if the name has changed, update that
-                    currentAlarmNameTd.innerHTML = nameTdTextContent;
-                    const currentAlarmCancelButton = currentAlarmTr.querySelector('a');
-                    if(currentAlarmCancelButton != null) {
-                        currentAlarmCancelButton.removeEventListener
+                else {
+                    let currentAlarmTr = this.querySelector("#alexa-alarms-timers-id-" + this.alarms[i].id);
+                    if(currentAlarmTr == null) {
+                        const tr = document.createElement('tr');
+                        tr.id = "alexa-alarms-timers-id-" + this.alarms[i].id;
+                        let nameTd = document.createElement('td');
+                        nameTd.classList.add('alexa-alarms-timers-name');
+                        let nameTdText = document.createTextNode(name);
+                        nameTd.appendChild(nameTdText);
+                        tr.appendChild(nameTd);
+                        let timeLeftTd = document.createElement('td');
+                        timeLeftTd.classList.add('alexa-alarms-timers-time');
+                        let timeLeftTdText = document.createTextNode(timeLeftTextContent);
+                        timeLeftTd.appendChild(timeLeftTdText);
+                        tr.appendChild(timeLeftTd);
+                        if(this.config.hasOwnProperty("show_cancel_button") && this.config.show_cancel_button == true && this.config.hasOwnProperty("cancel_entity")) {
+                            let xTd = document.createElement('td');
+                            xTd.classList.add('alexa-alarms-timers-x');
+                            let a = document.createElement('a');
+                            let aContent = document.createElement('ha-icon');
+                            aContent.setAttribute("icon", "mdi:close-circle-outline");
+                            a.appendChild(aContent);
+                            a.classList.add('timerCancelButton');
+                            a.href = '#';
+                            xTd.appendChild(a);
+                            tr.appendChild(xTd);
+                            let id = this.alarms[i].id;
+                            a.addEventListener('click', (e) => {
+                              cancelTimerAlarm(this, id, "alarm");
+                              e.preventDefault();
+                            });
+                        }
+    
+                        // figure out how many rows are currently in the table so we can stick this new row in the right place
+                        const currentTrCount = table.getElementsByTagName("tr").length;
+                        if(i >= currentTrCount) {
+                            table.appendChild(tr);
+                        }
+                        else {
+                            table.insertBefore(tr, table.getElementsByTagName("tr")[i]);
+                        }
+                        currentAlarmTr = tr;
+                    }
+                    const currentAlarmNameTd = currentAlarmTr.querySelector('.alexa-alarms-timers-name');
+                    if(currentAlarmNameTd.innerHTML != nameTextContent) { // if the name has changed, update that
+                        currentAlarmNameTd.innerHTML = nameTextContent;
+                        const currentAlarmCancelButton = currentAlarmTr.querySelector('a');
+                        if(currentAlarmCancelButton != null) {
+                            currentAlarmCancelButton.removeEventListener
+                        }
+                    }
+    
+                    const currentAlarmTimeLeftTd = currentAlarmTr.querySelector('.alexa-alarms-timers-time');
+                    if(currentAlarmTimeLeftTd.innerHTML != timeLeftTextContent) { // if the time left has changed, update that
+                        currentAlarmTimeLeftTd.innerHTML = timeLeftTextContent;
                     }
                 }
-
-                const currentAlarmTimeLeftTd = currentAlarmTr.querySelector('.alexa-alarms-timers-time');
-                if(currentAlarmTimeLeftTd.innerHTML != timeLeftTdTextContent) { // if the time left has changed, update that
-                    currentAlarmTimeLeftTd.innerHTML = timeLeftTdTextContent;
-                }
-
             }
             // Timers
             for (let i = 0; i < this.timers.length; i++) {
@@ -210,69 +292,125 @@ class CardAlexaAlarmsTimers extends HTMLElement {
                     }
                 }
 
-                let nameTdTextContent = name;
+                let nameTextContent = name;
                 if(!this.config.hasOwnProperty('show_device_name') || this.config.show_device_name == true) {
-                    nameTdTextContent = name + " on " + this.timers[i].device;
+                    nameTextContent = name + " on " + this.timers[i].device;
                 }
 
-                let timeLeftTdTextContent = timeLeft;
+                let timeLeftTextContent = timeLeft;
                 if(!this.config.hasOwnProperty('remaining_time_bold') || this.config.remaining_time_bold == true) {
-                    timeLeftTdTextContent = "<strong>" + timeLeft + "</strong>";
+                    timeLeftTextContent = "<strong>" + timeLeft + "</strong>";
                 }
-
-                let currentTimerTr = this.querySelector("#alexa-alarms-timers-id-" + this.timers[i].id);
-                if(currentTimerTr == null) {
-                    const tr = document.createElement('tr');
-                    tr.id = "alexa-alarms-timers-id-" + this.timers[i].id;
-                    let nameTd = document.createElement('td');
-                    nameTd.classList.add('alexa-alarms-timers-name');
-                    let nameTdText = document.createTextNode(nameTdTextContent);
-                    nameTd.appendChild(nameTdText);
-                    tr.appendChild(nameTd);
-                    let timeLeftTd = document.createElement('td');
-                    timeLeftTd.classList.add('alexa-alarms-timers-time');
-                    let timeLeftTdText = document.createTextNode(timeLeftTdTextContent);
-                    timeLeftTd.appendChild(timeLeftTdText);
-                    tr.appendChild(timeLeftTd);
-                    if(this.config.hasOwnProperty("show_cancel_button") && this.config.show_cancel_button == true && this.config.hasOwnProperty("cancel_entity")) {
-                        let xTd = document.createElement('td');
-                        xTd.classList.add('alexa-alarms-timers-x');
-                        let a = document.createElement('a');
-                        let aContent = document.createElement('ha-icon');
-                        aContent.setAttribute("icon", "mdi:close-circle-outline");
-                        a.appendChild(aContent);
-                        a.classList.add('timerCancelButton');
-                        a.href = '#';
-                        xTd.appendChild(a);
-                        tr.appendChild(xTd);
-                        let id = this.timers[i].id;
-                        a.addEventListener('click', (e) => {
-                        cancelTimerAlarm(this, id, "timer");
-                        e.preventDefault();
-                        });
+                
+                if(displayStyle == "box") {
+                    let currentTimerBox = this.querySelector("#alexa-alarms-timers-id-" + this.timers[i].id);
+                    if(currentTimerBox == null) {
+                        const timerBox = document.createElement('div');
+                        timerBox.id = "alexa-alarms-timers-id-" + this.timers[i].id;
+                        timerBox.classList.add("alexa-alarms-timers-alarm-box");
+                        let nameBox = document.createElement('div');
+                        nameBox.classList.add('alexa-alarms-timers-name');
+                        let nameText = document.createTextNode(nameTextContent);
+                        nameBox.appendChild(nameText);
+                        timerBox.appendChild(nameBox);
+                        let timeLeftBox = document.createElement('div');
+                        timeLeftBox.classList.add('alexa-alarms-timers-time');
+                        let timeLeftText = document.createTextNode(timeLeftTextContent);
+                        timeLeftBox.appendChild(timeLeftText);
+                        timerBox.appendChild(timeLeftBox);
+                        if(this.config.hasOwnProperty("show_cancel_button") && this.config.show_cancel_button == true && this.config.hasOwnProperty("cancel_entity")) {
+                            let xBox = document.createElement('div');
+                            xBox.classList.add('alexa-alarms-timers-x');
+                            let a = document.createElement('a');
+                            let aContent = document.createElement('ha-icon');
+                            aContent.setAttribute("icon", "mdi:close-circle-outline");
+                            a.appendChild(aContent);
+                            a.classList.add('timerCancelButton');
+                            a.href = '#';
+                            xBox.appendChild(a);
+                            timerBox.appendChild(xBox);
+                            let id = this.timers[i].id;
+                            a.addEventListener('click', (e) => {
+                            cancelTimerAlarm(this, id, "timer");
+                            e.preventDefault();
+                            });
+                        }
+    
+                        // figure out how many rows are currently in the table so we can stick this new row in the right place
+                        const currentTimerCount = outerBox.querySelectorAll(".alexa-alarms-timers-alarm-box").length;
+                        if((i + this.alarms.length) >= currentTimerCount) {
+                            outerBox.appendChild(timerBox);
+                        }
+                        else {
+                            outerBox.insertBefore(timerBox, outerBox.querySelectorAll(".alexa-alarms-timers-alarm-box")[i + this.alarms.length]);
+                        }
+                        currentTimerBox = timerBox;
                     }
-
-                    // figure out how many rows are currently in the table so we can stick this new row in the right place
-                    const currentTrCount = table.getElementsByTagName("tr").length;
-                    if((i + this.alarms.length) >= currentTrCount) {
-                        table.appendChild(tr);
+    
+                    const currentTimerNameBox = currentTimerBox.querySelector('.alexa-alarms-timers-name');
+                    if(currentTimerNameBox.innerHTML != nameTextContent) {
+                        currentTimerNameBox.innerHTML = nameTextContent;
                     }
-                    else {
-                        table.insertBefore(tr, table.getElementsByTagName("tr")[i + this.alarms.length]);
+    
+                    const currentTimerTimeLeftBox = currentTimerBox.querySelector('.alexa-alarms-timers-time');
+                    if(currentTimerTimeLeftBox.innerHTML != timeLeftTextContent) {
+                        currentTimerTimeLeftBox.innerHTML = timeLeftTextContent;
                     }
-                    currentTimerTr = tr;
                 }
-
-                const currentTimerNameTd = currentTimerTr.querySelector('.alexa-alarms-timers-name');
-                if(currentTimerNameTd.innerHTML != nameTdTextContent) {
-                    currentTimerNameTd.innerHTML = nameTdTextContent;
+                else {
+                    let currentTimerTr = this.querySelector("#alexa-alarms-timers-id-" + this.timers[i].id);
+                    if(currentTimerTr == null) {
+                        const tr = document.createElement('tr');
+                        tr.id = "alexa-alarms-timers-id-" + this.timers[i].id;
+                        let nameTd = document.createElement('td');
+                        nameTd.classList.add('alexa-alarms-timers-name');
+                        let nameTdText = document.createTextNode(nameTextContent);
+                        nameTd.appendChild(nameTdText);
+                        tr.appendChild(nameTd);
+                        let timeLeftTd = document.createElement('td');
+                        timeLeftTd.classList.add('alexa-alarms-timers-time');
+                        let timeLeftTdText = document.createTextNode(timeLeftTextContent);
+                        timeLeftTd.appendChild(timeLeftTdText);
+                        tr.appendChild(timeLeftTd);
+                        if(this.config.hasOwnProperty("show_cancel_button") && this.config.show_cancel_button == true && this.config.hasOwnProperty("cancel_entity")) {
+                            let xTd = document.createElement('td');
+                            xTd.classList.add('alexa-alarms-timers-x');
+                            let a = document.createElement('a');
+                            let aContent = document.createElement('ha-icon');
+                            aContent.setAttribute("icon", "mdi:close-circle-outline");
+                            a.appendChild(aContent);
+                            a.classList.add('timerCancelButton');
+                            a.href = '#';
+                            xTd.appendChild(a);
+                            tr.appendChild(xTd);
+                            let id = this.timers[i].id;
+                            a.addEventListener('click', (e) => {
+                            cancelTimerAlarm(this, id, "timer");
+                            e.preventDefault();
+                            });
+                        }
+    
+                        // figure out how many rows are currently in the table so we can stick this new row in the right place
+                        const currentTrCount = table.getElementsByTagName("tr").length;
+                        if((i + this.alarms.length) >= currentTrCount) {
+                            table.appendChild(tr);
+                        }
+                        else {
+                            table.insertBefore(tr, table.getElementsByTagName("tr")[i + this.alarms.length]);
+                        }
+                        currentTimerTr = tr;
+                    }
+    
+                    const currentTimerNameTd = currentTimerTr.querySelector('.alexa-alarms-timers-name');
+                    if(currentTimerNameTd.innerHTML != nameTextContent) {
+                        currentTimerNameTd.innerHTML = nameTextContent;
+                    }
+    
+                    const currentTimerTimeLeftTd = currentTimerTr.querySelector('.alexa-alarms-timers-time');
+                    if(currentTimerTimeLeftTd.innerHTML != timeLeftTextContent) {
+                        currentTimerTimeLeftTd.innerHTML = timeLeftTextContent;
+                    }
                 }
-
-                const currentTimerTimeLeftTd = currentTimerTr.querySelector('.alexa-alarms-timers-time');
-                if(currentTimerTimeLeftTd.innerHTML != timeLeftTdTextContent) {
-                    currentTimerTimeLeftTd.innerHTML = timeLeftTdTextContent;
-                }
-
             }
 
             // Remove old alarms and timers
