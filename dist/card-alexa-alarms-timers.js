@@ -414,11 +414,22 @@ class CardAlexaAlarmsTimers extends HTMLElement {
             }
 
             // Remove old alarms and timers
-            for(let i = table.getElementsByTagName("tr").length - 1; i >= 0; i--) {
-                const tr = table.getElementsByTagName("tr")[i];
-                if(!this.alarms.some((alarm) => "alexa-alarms-timers-id-" + alarm.id == tr.id) && !this.timers.some((timer) => "alexa-alarms-timers-id-" + timer.id == tr.id)) {
-                    // this timer or alarm is no longer active
-                    tr.remove();
+            if(displayStyle == "box") {
+                for(let i = outerBox.querySelectorAll(".alexa-alarms-timers-alarm-box").length - 1; i >= 0; i--) {
+                    const element = outerBox.querySelectorAll(".alexa-alarms-timers-alarm-box")[i];
+                    if(!this.alarms.some((alarm) => "alexa-alarms-timers-id-" + alarm.id == tr.id) && !this.timers.some((timer) => "alexa-alarms-timers-id-" + timer.id == tr.id)) {
+                        // this timer or alarm is no longer active
+                        element.remove();
+                    }
+                }
+                }
+            else {
+                for(let i = table.getElementsByTagName("tr").length - 1; i >= 0; i--) {
+                    const tr = table.getElementsByTagName("tr")[i];
+                    if(!this.alarms.some((alarm) => "alexa-alarms-timers-id-" + alarm.id == tr.id) && !this.timers.some((timer) => "alexa-alarms-timers-id-" + timer.id == tr.id)) {
+                        // this timer or alarm is no longer active
+                        tr.remove();
+                    }
                 }
             }
         }
