@@ -417,7 +417,7 @@ class CardAlexaAlarmsTimers extends HTMLElement {
             if(displayStyle == "box") {
                 for(let i = outerBox.querySelectorAll(".alexa-alarms-timers-alarm-box").length - 1; i >= 0; i--) {
                     const element = outerBox.querySelectorAll(".alexa-alarms-timers-alarm-box")[i];
-                    if(!this.alarms.some((alarm) => "alexa-alarms-timers-id-" + alarm.id == tr.id) && !this.timers.some((timer) => "alexa-alarms-timers-id-" + timer.id == tr.id)) {
+                    if(!this.alarms.some((alarm) => "alexa-alarms-timers-id-" + alarm.id == element.id) && !this.timers.some((timer) => "alexa-alarms-timers-id-" + timer.id == element.id)) {
                         // this timer or alarm is no longer active
                         element.remove();
                     }
