@@ -29,6 +29,9 @@ Within the .yaml file for your dashboard, the card looks like this:
   entities_timer:
     - sensor.livingroom_next_timer
     - sensor.kitchen_next_timer
+  entities_reminder:
+    - sensor.livingroom_next_reminder
+    - sensor.kitchen_next_reminder
   # the following are optional parameters:
   remaining_time_bold: true
   show_cancel_button: false
@@ -41,11 +44,11 @@ Within the .yaml file for your dashboard, the card looks like this:
   display_style: "table"
 ```
 
-Add as many _next_timer and _next_alarms as you want in the entities_alarm and entities_timer categories.
+Add as many _next_alarm, _next_timer, and _next_reminder entries as you want in the entities_alarm, entities_timer, and entities_reminder categories.
 
 # Optional Parameters
 - `remaining_time_bold` defaults to true, and toggles whether the remaining time column is displayed in bold.
-- `show_cancel_button` and `cancel_entity` are included for the use case of wanting to be able to cancel timers and alarms with an "X" icon. `show_cancel_button` is false by default. `cancel_entity` refers to the device which the cancel command is sent to. For more details, see "Canceling Timers/Alarms" below.
+- `show_cancel_button` and `cancel_entity` are included for the use case of wanting to be able to cancel timers, alarms, and reminders with an "X" icon. `show_cancel_button` is false by default. `cancel_entity` refers to the device which the cancel command is sent to. For more details, see "Canceling Timers/Alarms/Reminders" below.
 - `hide_card_on_empty` defaults to false, and is included for my original use case of not wanting to display an empty timer box on my wall display.
 - `card_title` defaults to "Alexa Timers and Alarms". If set to an empty string, no title will be displayed.
 - `show_device_name` defaults to true, and toggles whether to display the name of the device the timer or alarm is set on. For example, if you have a timer named "Cake" set on a device named "Kitchen Echo", if this is true it will display the name as "Cake on Kitchen Echo", and if false it will just display the name as "Cake".
@@ -82,5 +85,6 @@ An example card-mod style for the new box layout that places timers and alarms s
     }
 ```
 
-# Canceling Timers/Alarms
+# Canceling Timers/Alarms/Reminders
 This... works okay with named timers. It works sometimes with unnamed timers. I found that if I had a 2 hour unnamed timer, it refused to cancel it and claimed I had no timer named "2 hour" even though the code isn't claiming it's named anything. This whole part is clunky and I don't recommend it, but someone asked me to do it and I hope it works for them.
+I haven't tested it with reminders. I can't remember if I tested it with alarms.
