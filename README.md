@@ -22,26 +22,26 @@ frontend:
 Within the .yaml file for your dashboard, the card looks like this:
 
 ```
-- type: custom:card-alexa-alarms-timers
-  entities_alarm:
-    - sensor.livingroom_next_alarm
-    - sensor.kitchen_next_alarm
-  entities_timer:
-    - sensor.livingroom_next_timer
-    - sensor.kitchen_next_timer
-  entities_reminder:
-    - sensor.livingroom_next_reminder
-    - sensor.kitchen_next_reminder
-  # the following are optional parameters:
-  remaining_time_bold: true
-  show_cancel_button: false
-  cancel_entity: media_player.livingroom
-  hide_card_on_empty: false
-  card_title: "Alexa Timers and Alarms"
-  show_device_name: true
-  show_empty_hours: true
-  show_alarm_name_seconds: true
-  display_style: "table"
+type: custom:card-alexa-alarms-timers
+entities_alarm:
+  - sensor.livingroom_next_alarm
+  - sensor.kitchen_next_alarm
+entities_timer:
+  - sensor.livingroom_next_timer
+  - sensor.kitchen_next_timer
+entities_reminder:
+  - sensor.livingroom_next_reminder
+  - sensor.kitchen_next_reminder
+# the following are optional parameters:
+remaining_time_bold: true
+show_cancel_button: false
+cancel_entity: media_player.livingroom
+hide_card_on_empty: false
+card_title: "Alexa Timers and Alarms"
+show_device_name: true
+show_empty_hours: true
+show_alarm_name_seconds: true
+display_style: "table"
 ```
 
 Add as many _next_alarm, _next_timer, and _next_reminder entries as you want in the entities_alarm, entities_timer, and entities_reminder categories.
