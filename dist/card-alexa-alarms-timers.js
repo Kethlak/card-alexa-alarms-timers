@@ -55,16 +55,18 @@ class CardAlexaAlarmsTimers extends HTMLElement {
                 if (this.hass.states[entities[i]] !== undefined) { // undefined is when it can't access the entity
                     const attributes = this.hass.states[entities[i]].attributes;
                     const entity_id = this.hass.states[entities[i]].attributes.friendly_name;
-                    if (attributes.hasOwnProperty('sorted_active')) { // list of active alarms
-                        const sorted_active = JSON.parse(attributes.sorted_active);
-                        for (let j = 0; j < sorted_active.length; j++) { // loop through active alarms
-                            const alarm = sorted_active[j][1];
-                            if (Date.parse(alarm.date_time) >= Date.now()) { // the alarm is in the future
-                                let showSeconds = true;
-                                if(this.config.hasOwnProperty('show_alarm_name_seconds') && this.config.show_alarm_name_seconds == false) {
-                                    showSeconds = false;
+                    if (attributes.hasOwnProperty('alarms_brief')) { // list of all alarms
+                        if(attributes.alarms_brief.hasOwnProperty('active')) { // active alarms
+                            const active = attributes.alarms_brief.active;
+                            for (let j = 0; j < active.length; j++) { // loop through active alarms
+                                const alarm = active[j];
+                                if (Date.parse(alarm.date_time) >= Date.now()) { // the alarm is in the future
+                                    let showSeconds = true;
+                                    if(this.config.hasOwnProperty('show_alarm_name_seconds') && this.config.show_alarm_name_seconds == false) {
+                                        showSeconds = false;
+                                    }
+                                    this.alarms.push(new AlexaAlarm(alarm.id, alarm.alarmLabel, entity_id, alarm.date_time, showSeconds)); // convert it to an AlexaAlarm and add it to the array
                                 }
-                                this.alarms.push(new AlexaAlarm(alarm.id, alarm.alarmLabel, entity_id, alarm.date_time, showSeconds)); // convert it to an AlexaAlarm and add it to the array
                             }
                         }
                     }
@@ -81,12 +83,18 @@ class CardAlexaAlarmsTimers extends HTMLElement {
                 if (this.hass.states[entities_r[i]] !== undefined) { // undefined is when it can't access the entity
                     const attributes = this.hass.states[entities_r[i]].attributes;
                     const entity_id = this.hass.states[entities_r[i]].attributes.friendly_name;
-                    if (attributes.hasOwnProperty('sorted_active')) { // list of active reminders
-                        const sorted_active = JSON.parse(attributes.sorted_active);
-                        for (let j = 0; j < sorted_active.length; j++) { // loop through active reminders
-                            const reminder = sorted_active[j][1];
-                            if(reminder.alarmTime >= Date.now()) { // the reminder is in the future
-                                this.reminders.push(new AlexaReminder(reminder.id, reminder.reminderLabel, entity_id, reminder.alarmTime)); // convert it to an AlexaReminder and add it to the array
+                    if (attributes.hasOwnProperty('alarms_brief')) { // list of active reminders
+                        if(attributes.alarms_brief.hasOwnProperty('active')) {
+                            const active = attributes.alarms_brief.active;
+                            for (let j = 0; j < active.length; j++) { // loop through active reminders
+                                const reminder = active[j];
+                                if(reminder.alarmTime >= Date.now()) { // the reminder is in the future
+                                    let reminderLabel = "Unknown Name";
+                                    if(j == 0) { // this is the first reminder, we can use the name it has
+                                        reminderLabel = attributes.reminder;
+                                    }
+                                    this.reminders.push(new AlexaReminder(reminder.id, reminderLabel, entity_id, reminder.alarmTime)); // convert it to an AlexaReminder and add it to the array
+                                }
                             }
                         }
                     }
@@ -103,12 +111,19 @@ class CardAlexaAlarmsTimers extends HTMLElement {
                 if (this.hass.states[entities_t[i]] !== undefined) { // undefined is when it can't access the entity
                     const attributes = this.hass.states[entities_t[i]].attributes;
                     const entity_id = this.hass.states[entities_t[i]].attributes.friendly_name;
-                    if (attributes.hasOwnProperty('sorted_active')) { // list of active timers
-                        const sorted_active = JSON.parse(attributes.sorted_active);
-                        for (let j = 0; j < sorted_active.length; j++) { // loop through active timers
-                            const timer = sorted_active[j][1];
-                            if (timer.triggerTime >= new Date().getTime()) { // the timer goes off in the future
-                                this.timers.push(new AlexaTimer(timer.id, timer.timerLabel, entity_id, timer.triggerTime, timer.originalDurationInMillis)); // convert it to an AlexaTimer and add it to the array
+                    if (attributes.hasOwnProperty('alarms_brief')) { // list of active timers
+                        if(attributes.alarms_brief.hasOwnProperty('active')) {
+                            const active = attributes.alarms_brief.active;
+                            for (let j = 0; j < active.length; j++) { // loop through active timers
+                                const timer = active[j];
+                                if (timer.remainingTime > 0) { // the timer goes off in the future
+                                    let timerName = null;
+                                    if(j == 0) { // this is the first timer, we can use the name it has
+                                        timerName = attributes.timer;
+                                    }
+                                    let originalDuration = null;
+                                    this.timers.push(new AlexaTimer(timer.id, timerName, entity_id, timer.remainingTime, originalDuration)); // convert it to an AlexaTimer and add it to the array
+                                }
                             }
                         }
                     }
@@ -321,7 +336,9 @@ class CardAlexaAlarmsTimers extends HTMLElement {
                 let name = this.timers[i].label;
                 if (name === null) {
                     // if it doesn't have a name, build one based on full duration
-                    name = getNameFromDuration(this.timers[i].originalDurationInMillis);
+                    //name = getNameFromDuration(this.timers[i].originalDurationInMillis);
+                    console.log(this.timers);
+                    name = getNameFromDuration(this.timers[i].remainingTime);
                 }
                 let timeLeft = this.timers[i].hours + ":" + addLeadingZero(this.timers[i].minutes) + ":" + addLeadingZero(this.timers[i].seconds);
                 if(this.config.hasOwnProperty('show_empty_hours') && this.config.show_empty_hours == false) {
@@ -646,24 +663,22 @@ class AlexaAlarm {
 }
 
 class AlexaTimer {
-    constructor(id, label, device, triggerTime, originalDurationInMillis) {
+    constructor(id, label, device, remainingTime, originalDuration) {
         this.id = id;
         this.label = label;
         this.device = device.substring(0, device.indexOf("next"));
-        this.triggerTime = triggerTime;
-        this.remainingTime = this.triggerTime - (new Date().getTime());
+        this.remainingTime = remainingTime;
         this.seconds = Math.floor(this.remainingTime / 1000);
         this.minutes = Math.floor(this.seconds / 60);
         this.hours = Math.floor(this.minutes / 60);
         this.seconds = this.seconds % 60;
         this.minutes = this.minutes % 60;
-        this.originalDurationInMillis = originalDurationInMillis;
+        //this.originalDurationInMillis = originalDurationInMillis;
     }
 }
 
 class AlexaReminder {
     constructor(id, label, device, alarmTime) {
-        console.log("creating AlexaReminder");
         this.id = id;
         this.name = label;
         this.device = device.substring(0, device.indexOf("next"));
@@ -676,10 +691,6 @@ class AlexaReminder {
         this.seconds = this.seconds % 60;
         this.minutes = this.minutes % 60;
         this.hours = this.hours % 24;
-        console.log("this.name = " + this.name);
-        console.log("this.remainingTime = " + this.remainingTime);
-        console.log("this.alarmTime = " + this.alarmTime);
-        console.log("Date.now() = " + Date.now());
     }
 }
 
@@ -785,7 +796,7 @@ function getNameFromDuration(millis) {
 }
 
 function cancelTimerAlarmReminder(card, id, isTimerOrAlarmOrReminder) {
-    const entity_id = card.config.cancel_entity;
+    /*const entity_id = card.config.cancel_entity;
     let timerName = "";
     if(isTimerOrAlarmOrReminder == "timer" && card.timers.find((timer) => timer.id == id).label === null) {
         const currentTimer = card.timers.find((timer) => timer.id == id);
@@ -842,7 +853,7 @@ function cancelTimerAlarmReminder(card, id, isTimerOrAlarmOrReminder) {
             'media_content_id': media_content_id,
             'media_content_type': "custom"
         });
-    }
+    }*/
 }
 
 function getOrdinal(num) {
